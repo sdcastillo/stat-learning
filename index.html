@@ -1,40 +1,1491 @@
-<html>
-<body>
+---
+layout: default
+title: An Introduction to Statistical Learning
+description: Unofficial exercise notes and R labs, from bias–variance through clustering.
+samwiki: true
+---
 
-<h3><i>An Introduction to Statistical Learning</i> Unofficial Solutions</h3>
+<div class="sw-lede">
+  <div class="sw-lede-copy">
+    <h2>How to read these notes</h2>
+    <p>This is an unofficial exercise index for <em>An Introduction to Statistical Learning</em> by James, Witten, Hastie, and Tibshirani. The files follow the first-edition chapter order in the repository, from the bias–variance setup in Chapter 2 through principal components and clustering in Chapter 10. The book’s site is <a href="http://www.statlearning.com">statlearning.com</a>.</p>
+    <p>Conceptual notes keep the algebra. Chapter 4, Exercise 1 starts from the logistic curve and rearranges it until the odds equal <code>p(X) / (1 − p(X)) = e^(β₀ + β₁X)</code>. Chapter 3, Exercise 7 proves that in simple linear regression, <code>R²</code> equals the square of the correlation between <code>x</code> and <code>y</code>, from the definitions of TSS and RSS. Chapter 10, Exercise 1 shows that the summed squared Euclidean distance inside a cluster is twice the within-cluster sum of squares, the identity used when a method minimizes within-cluster variance.</p>
+    <p>Applied answers are R, and several of them were knitted so the figures stay next to the code. The Chapter 2 script reads <code>College.csv</code>, marks a college elite when <code>Top10perc</code> is above 50, and later uses the Boston suburb data for crime, tax, and room counts. The Chapter 3 knitted page regresses <code>mpg</code> on <code>horsepower</code> in <code>Auto.csv</code>, takes the large F-statistic as evidence of a relationship, and reads the residual plots as a sign of nonlinearity.</p>
+    <p>Every chapter includes the book lab: an introduction to R; linear regression; logistic regression, LDA, QDA, and KNN on Smarket; cross-validation and the bootstrap; best subset, ridge, the lasso, PCR, and PLS on Hitters; polynomials, splines, and GAMs on Wage; trees through boosting on Carseats; support vector machines, including the gene-expression data; and PCA plus hierarchical clustering on NCI60. <code>ch2/notes/</code> adds a curse-of-dimensionality plot and a hypercube-boundary simulation. <code>ch9/9.R</code> is a short quiz simulation that fits logistic regression in a setup usually compared with a linear support vector machine.</p>
+    <p>The previous home page sent the Chapter 2 answers and the early Chapter 3 answers to raw files on the upstream repository. Those notes are in this fork, so the links below open them here. Chapter 3, Exercise 7 has its own proof page. Exercises 8–15 share one knitted HTML file. A step marked <code>(*)</code> is a step the write-up treats as unsettled, the same convention as the README. Sam Castillo (UMass Amherst mathematics) publishes this copy. The upstream collection is <a href="https://github.com/asadoughi/stat-learning">asadoughi/stat-learning</a>.</p>
+  </div>
+  <aside class="sw-find" aria-label="Takeaways">
+    <h2>Takeaways</h2>
+    <ul>
+      <li><strong>Odds, R², and cluster variance</strong> Chapter 4 Exercise 1, Chapter 3 Exercise 7, and Chapter 10 Exercise 1 write those identities out.</li>
+      <li><strong>College, Auto, and Boston</strong> Applied R uses <code>College.csv</code>, <code>Auto.csv</code>, and the Boston suburbs, with knitted plots where a chapter was rendered.</li>
+      <li><strong>Book labs sit in each chapter</strong> Resampling, ridge and the lasso, splines, trees, SVMs, PCA, and NCI60 clustering are in the <code>lab.R</code> scripts.</li>
+      <li><strong><code>(*)</code> means unsettled</strong> The README uses this mark when the author is not sure about that answer.</li>
+      <li><strong>Links open this repository</strong> Chapter 2 and Chapter 3 use the local files. The upstream collection stays linked beside them.</li>
+    </ul>
+  </aside>
+</div>
 
-<p>
-  <a href="https://github.com/asadoughi/stat-learning">Fork the solutions!</a><br />
-  <a href="https://twitter.com/princehonest">Twitter me @princehonest</a><br />
-  <a href="http://www.statlearning.com">Official book website</a><br />
-</p>
+<div class="sw-catalog-bar">
+  <div class="sw-toolbar">
+    <label class="sw-search">Find an exercise
+      <input id="sw-q" type="search" placeholder="Try logistic, Boston, spline, chapter 10" autocomplete="off">
+    </label>
+    <p class="sw-result" id="sw-count" aria-live="polite"></p>
+  </div>
+  <nav class="sw-jumps" aria-label="Chapters">
+    <a href="#chapter-2">Ch 2</a>
+    <a href="#chapter-3">Ch 3</a>
+    <a href="#chapter-4">Ch 4</a>
+    <a href="#chapter-5">Ch 5</a>
+    <a href="#chapter-6">Ch 6</a>
+    <a href="#chapter-7">Ch 7</a>
+    <a href="#chapter-8">Ch 8</a>
+    <a href="#chapter-9">Ch 9</a>
+    <a href="#chapter-10">Ch 10</a>
+    <a href="#data">Data</a>
+  </nav>
+</div>
 
-<p>
-  Check out Github <a href="https://github.com/asadoughi/stat-learning/issues?state=open">issues</a> and <a href="https://github.com/asadoughi/stat-learning/">repo</a> for the latest updates.
-</p>
+<section class="sw-section" id="chapter-2">
+  <div class="sw-section-head">
+    <h2>Chapter 2 <span class="sw-pill">Statistical learning</span></h2>
+    <p>Flexibility, inference versus prediction, and a first KNN calculation, then College.csv and the Boston suburbs in R.</p>
+  </div>
+  <div class="sw-grid">
+<article class="sw-card" data-search="chapter 2 exercise 1 conceptual answers knn bias variance flexibility parametric">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 1</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Conceptual answers. Exercises 1–7 share ch2/answers.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch2/answers">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch2/answers">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 2 exercise 2 conceptual answers knn bias variance flexibility parametric">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 2</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Conceptual answers. Exercises 1–7 share ch2/answers.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch2/answers">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch2/answers">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 2 exercise 3 conceptual answers knn bias variance flexibility parametric">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 3</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Conceptual answers. Exercises 1–7 share ch2/answers.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch2/answers">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch2/answers">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 2 exercise 4 conceptual answers knn bias variance flexibility parametric">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 4</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Conceptual answers. Exercises 1–7 share ch2/answers.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch2/answers">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch2/answers">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 2 exercise 5 conceptual answers knn bias variance flexibility parametric">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 5</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Conceptual answers. Exercises 1–7 share ch2/answers.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch2/answers">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch2/answers">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 2 exercise 6 conceptual answers knn bias variance flexibility parametric">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 6</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Conceptual answers. Exercises 1–7 share ch2/answers.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch2/answers">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch2/answers">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 2 exercise 7 conceptual answers knn bias variance flexibility parametric">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 7</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Conceptual answers. Exercises 1–7 share ch2/answers.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch2/answers">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch2/answers">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 2 exercise 8 college elite top10perc outstate graduation applied">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 8</h3>
+    <span class="sw-lang">R</span>
+  </div>
+  <p class="sw-desc">College.csv. A school is marked elite when Top10perc is above 50.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch2/applied.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch2/applied.R">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 2 exercise 9 auto mpg cylinders horsepower applied">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 9</h3>
+    <span class="sw-lang">R</span>
+  </div>
+  <p class="sw-desc">Auto data in the same applied script, after the college summaries.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch2/applied.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch2/applied.R">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 2 exercise 10 boston crime tax ptratio rooms medv applied">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 10</h3>
+    <span class="sw-lang">R</span>
+  </div>
+  <p class="sw-desc">Boston suburbs. Crime has a long right tail; median pupil-teacher ratio is 19.05.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch2/applied.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch2/applied.R">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 2 lab introduction to R graphics indexing summaries">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Lab</h3>
+    <span class="sw-lang">Lab</span>
+  </div>
+  <p class="sw-desc">Introduction to R: basic commands, graphics, indexing, and numerical summaries.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch2/lab.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch2/lab.R">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 2 notes neighbor hastie lecture fixed neighborhood window">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Fixed-neighborhood sketch</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Graphs Hastie’s Lecture 2.1 estimate. It averages y inside a window of fixed width.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch2/notes/neighbor.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch2/notes/neighbor.R">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 2 notes dimension curse of dimensionality fringe boundary">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Curse of dimensionality</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Draws random points and the share that land near the edge of the cube as dimension grows.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch2/notes/dimension.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch2/notes/dimension.R">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 2 notes hypercube boundary experiment uniform cube">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Hypercube boundary</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Ten thousand uniform points in the unit cube; a point is on the boundary if a coordinate is within 0.05 of 0 or 1.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch2/notes/Hypercube-boundary-experiment.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch2/notes/Hypercube-boundary-experiment.R">Source</a>
+  </div>
+</article>
+  </div>
+</section>
+<section class="sw-section" id="chapter-3">
+  <div class="sw-section-head">
+    <h2>Chapter 3 <span class="sw-pill">Linear regression</span></h2>
+    <p>A written proof that R² is squared correlation, then a knitted Auto analysis from horsepower through the later applied problems.</p>
+  </div>
+  <div class="sw-grid">
+<article class="sw-card" data-search="chapter 3 exercise 1 linear regression conceptual advertising gpa interaction rss">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 1</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Conceptual answers. Exercises 1–6 share ch3/answers, including the advertising p-values and the GPA interaction.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/answers">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/answers">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 exercise 2 linear regression conceptual advertising gpa interaction rss">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 2</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Conceptual answers. Exercises 1–6 share ch3/answers, including the advertising p-values and the GPA interaction.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/answers">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/answers">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 exercise 3 linear regression conceptual advertising gpa interaction rss">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 3</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Conceptual answers. Exercises 1–6 share ch3/answers, including the advertising p-values and the GPA interaction.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/answers">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/answers">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 exercise 4 linear regression conceptual advertising gpa interaction rss">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 4</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Conceptual answers. Exercises 1–6 share ch3/answers, including the advertising p-values and the GPA interaction.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/answers">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/answers">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 exercise 5 linear regression conceptual advertising gpa interaction rss">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 5</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Conceptual answers. Exercises 1–6 share ch3/answers, including the advertising p-values and the GPA interaction.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/answers">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/answers">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 exercise 6 linear regression conceptual advertising gpa interaction rss">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 6</h3>
+    <span class="sw-lang">Notes</span>
+  </div>
+  <p class="sw-desc">Conceptual answers. Exercises 1–6 share ch3/answers, including the advertising p-values and the GPA interaction.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/answers">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/answers">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 exercise 7 proof R squared correlation TSS RSS simple linear regression">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 7</h3>
+    <span class="sw-lang">Proof</span>
+  </div>
+  <p class="sw-desc">Proof that simple linear regression has R² equal to the squared correlation of x and y.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/7.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/7.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 exercise 8 applied auto mpg horsepower knitted linear regression">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 8</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Opens the knitted applied page. Exercise 8 fits mpg on horsepower; later items continue through exercise 15.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/applied.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/applied.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 exercise 9 applied auto mpg horsepower knitted linear regression">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 9</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Opens the knitted applied page. Exercise 8 fits mpg on horsepower; later items continue through exercise 15.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/applied.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/applied.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 exercise 10 applied auto mpg horsepower knitted linear regression">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 10</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Opens the knitted applied page. Exercise 8 fits mpg on horsepower; later items continue through exercise 15.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/applied.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/applied.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 exercise 11 applied auto mpg horsepower knitted linear regression">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 11</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Opens the knitted applied page. Exercise 8 fits mpg on horsepower; later items continue through exercise 15.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/applied.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/applied.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 exercise 12 applied auto mpg horsepower knitted linear regression">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 12</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Opens the knitted applied page. Exercise 8 fits mpg on horsepower; later items continue through exercise 15.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/applied.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/applied.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 exercise 13 applied auto mpg horsepower knitted linear regression">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 13</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Opens the knitted applied page. Exercise 8 fits mpg on horsepower; later items continue through exercise 15.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/applied.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/applied.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 exercise 14 applied auto mpg horsepower knitted linear regression">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 14</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Opens the knitted applied page. Exercise 8 fits mpg on horsepower; later items continue through exercise 15.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/applied.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/applied.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 exercise 15 applied auto mpg horsepower knitted linear regression">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 15</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Opens the knitted applied page. Exercise 8 fits mpg on horsepower; later items continue through exercise 15.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/applied.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/applied.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 3 lab linear regression interaction qualitative predictors">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Lab</h3>
+    <span class="sw-lang">Lab</span>
+  </div>
+  <p class="sw-desc">Simple and multiple linear regression, interactions, nonlinear transforms, and qualitative predictors.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/lab.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch3/lab.R">Source</a>
+  </div>
+</article>
+  </div>
+</section>
+<section class="sw-section" id="chapter-4">
+  <div class="sw-section-head">
+    <h2>Chapter 4 <span class="sw-pill">Classification</span></h2>
+    <p>Logistic regression, LDA, QDA, and KNN. The lab uses the Smarket data.</p>
+  </div>
+  <div class="sw-grid">
+<article class="sw-card" data-search="chapter 4 exercise 1 logistic lda qda knn smarket classification weekly odds logistic equation 4.2 4.3">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 1</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Rearranges the logistic curve into the odds form e to the beta-zero plus beta-one X.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch4/1.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch4/1.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 4 exercise 2 logistic lda qda knn smarket classification weekly">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 2</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch4/2.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch4/2.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 4 exercise 3 logistic lda qda knn smarket classification weekly">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 3</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch4/3.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch4/3.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 4 exercise 4 logistic lda qda knn smarket classification weekly">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 4</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch4/4.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch4/4.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 4 exercise 5 logistic lda qda knn smarket classification weekly">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 5</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch4/5.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch4/5.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 4 exercise 6 logistic lda qda knn smarket classification weekly">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 6</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch4/6.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch4/6.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 4 exercise 7 logistic lda qda knn smarket classification weekly">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 7</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch4/7.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch4/7.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 4 exercise 8 logistic lda qda knn smarket classification weekly">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 8</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch4/8.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch4/8.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 4 exercise 9 logistic lda qda knn smarket classification weekly">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 9</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch4/9.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch4/9.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 4 exercise 10 logistic lda qda knn smarket classification weekly">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 10</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch4/10.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch4/10.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 4 exercise 11 logistic lda qda knn smarket classification weekly">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 11</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch4/11.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch4/11.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 4 exercise 12 logistic lda qda knn smarket classification weekly">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 12</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch4/12.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch4/12.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 4 exercise 13 logistic lda qda knn smarket classification weekly">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 13</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch4/13.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch4/13.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 4 lab logistic LDA QDA KNN smarket">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Lab</h3>
+    <span class="sw-lang">Lab</span>
+  </div>
+  <p class="sw-desc">Logistic regression, LDA, QDA, and KNN on the Smarket data.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch4/lab.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch4/lab.R">Source</a>
+  </div>
+</article>
+  </div>
+</section>
+<section class="sw-section" id="chapter-5">
+  <div class="sw-section-head">
+    <h2>Chapter 5 <span class="sw-pill">Resampling</span></h2>
+    <p>Cross-validation and the bootstrap, worked in the lab on Auto and mpg versus horsepower.</p>
+  </div>
+  <div class="sw-grid">
+<article class="sw-card" data-search="chapter 5 exercise 1 cross validation bootstrap resampling auto horsepower">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 1</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch5/1.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch5/1.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 5 exercise 2 cross validation bootstrap resampling auto horsepower">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 2</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch5/2.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch5/2.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 5 exercise 3 cross validation bootstrap resampling auto horsepower">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 3</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch5/3.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch5/3.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 5 exercise 4 cross validation bootstrap resampling auto horsepower">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 4</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch5/4.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch5/4.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 5 exercise 5 cross validation bootstrap resampling auto horsepower">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 5</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch5/5.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch5/5.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 5 exercise 6 cross validation bootstrap resampling auto horsepower">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 6</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch5/6.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch5/6.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 5 exercise 7 cross validation bootstrap resampling auto horsepower">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 7</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch5/7.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch5/7.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 5 exercise 8 cross validation bootstrap resampling auto horsepower">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 8</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch5/8.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch5/8.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 5 exercise 9 cross validation bootstrap resampling auto horsepower">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 9</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch5/9.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch5/9.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 5 lab cross-validation bootstrap">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Lab</h3>
+    <span class="sw-lang">Lab</span>
+  </div>
+  <p class="sw-desc">Validation set, leave-one-out and k-fold cross-validation, and the bootstrap.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch5/lab.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch5/lab.R">Source</a>
+  </div>
+</article>
+  </div>
+</section>
+<section class="sw-section" id="chapter-6">
+  <div class="sw-section-head">
+    <h2>Chapter 6 <span class="sw-pill">Model selection</span></h2>
+    <p>Subset selection, ridge, the lasso, PCR, and PLS. The lab runs them on Hitters salaries.</p>
+  </div>
+  <div class="sw-grid">
+<article class="sw-card" data-search="chapter 6 exercise 1 subset selection ridge lasso pcr pls hitters regularization">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 1</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch6/1.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch6/1.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 6 exercise 2 subset selection ridge lasso pcr pls hitters regularization">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 2</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch6/2.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch6/2.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 6 exercise 3 subset selection ridge lasso pcr pls hitters regularization">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 3</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch6/3.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch6/3.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 6 exercise 4 subset selection ridge lasso pcr pls hitters regularization">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 4</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch6/4.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch6/4.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 6 exercise 5 subset selection ridge lasso pcr pls hitters regularization">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 5</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch6/5.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch6/5.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 6 exercise 6 subset selection ridge lasso pcr pls hitters regularization">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 6</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch6/6.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch6/6.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 6 exercise 7 subset selection ridge lasso pcr pls hitters regularization">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 7</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch6/7.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch6/7.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 6 exercise 8 subset selection ridge lasso pcr pls hitters regularization">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 8</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch6/8.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch6/8.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 6 exercise 9 subset selection ridge lasso pcr pls hitters regularization">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 9</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch6/9.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch6/9.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 6 exercise 10 subset selection ridge lasso pcr pls hitters regularization">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 10</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch6/10.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch6/10.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 6 exercise 11 subset selection ridge lasso pcr pls hitters regularization">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 11</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch6/11.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch6/11.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 6 lab subset ridge lasso pcr pls hitters">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Lab</h3>
+    <span class="sw-lang">Lab</span>
+  </div>
+  <p class="sw-desc">Best subset, forward and backward stepwise, ridge, lasso, PCR, and PLS.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch6/lab.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch6/lab.R">Source</a>
+  </div>
+</article>
+  </div>
+</section>
+<section class="sw-section" id="chapter-7">
+  <div class="sw-section-head">
+    <h2>Chapter 7 <span class="sw-pill">Beyond linearity</span></h2>
+    <p>Polynomials, step functions, splines, and GAMs. The lab fits Wage against age.</p>
+  </div>
+  <div class="sw-grid">
+<article class="sw-card" data-search="chapter 7 exercise 1 polynomial spline gam step function wage age nonlinear">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 1</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch7/1.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch7/1.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 7 exercise 2 polynomial spline gam step function wage age nonlinear">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 2</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch7/2.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch7/2.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 7 exercise 3 polynomial spline gam step function wage age nonlinear">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 3</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch7/3.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch7/3.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 7 exercise 4 polynomial spline gam step function wage age nonlinear">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 4</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch7/4.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch7/4.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 7 exercise 5 polynomial spline gam step function wage age nonlinear">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 5</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch7/5.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch7/5.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 7 exercise 6 polynomial spline gam step function wage age nonlinear">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 6</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch7/6.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch7/6.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 7 exercise 7 polynomial spline gam step function wage age nonlinear">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 7</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch7/7.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch7/7.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 7 exercise 8 polynomial spline gam step function wage age nonlinear">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 8</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch7/8.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch7/8.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 7 exercise 9 polynomial spline gam step function wage age nonlinear">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 9</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch7/9.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch7/9.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 7 exercise 10 polynomial spline gam step function wage age nonlinear">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 10</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch7/10.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch7/10.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 7 exercise 11 polynomial spline gam step function wage age nonlinear">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 11</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch7/11.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch7/11.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 7 exercise 12 polynomial spline gam step function wage age nonlinear">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 12</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch7/12.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch7/12.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 7 lab polynomial spline gam wage">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Lab</h3>
+    <span class="sw-lang">Lab</span>
+  </div>
+  <p class="sw-desc">Polynomials and step functions, splines, and generalized additive models on Wage.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch7/lab.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch7/lab.R">Source</a>
+  </div>
+</article>
+  </div>
+</section>
+<section class="sw-section" id="chapter-8">
+  <div class="sw-section-head">
+    <h2>Chapter 8 <span class="sw-pill">Trees</span></h2>
+    <p>Classification and regression trees, bagging, random forests, and boosting. The lab uses Carseats.</p>
+  </div>
+  <div class="sw-grid">
+<article class="sw-card" data-search="chapter 8 exercise 1 tree bagging random forest boosting carseats">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 1</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch8/1.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch8/1.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 8 exercise 2 tree bagging random forest boosting carseats">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 2</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch8/2.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch8/2.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 8 exercise 3 tree bagging random forest boosting carseats">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 3</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch8/3.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch8/3.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 8 exercise 4 tree bagging random forest boosting carseats">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 4</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch8/4.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch8/4.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 8 exercise 5 tree bagging random forest boosting carseats">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 5</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch8/5.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch8/5.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 8 exercise 6 tree bagging random forest boosting carseats">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 6</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch8/6.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch8/6.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 8 exercise 7 tree bagging random forest boosting carseats">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 7</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch8/7.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch8/7.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 8 exercise 8 tree bagging random forest boosting carseats">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 8</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch8/8.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch8/8.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 8 exercise 9 tree bagging random forest boosting carseats">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 9</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch8/9.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch8/9.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 8 exercise 10 tree bagging random forest boosting carseats">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 10</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch8/10.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch8/10.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 8 exercise 11 tree bagging random forest boosting carseats">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 11</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch8/11.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch8/11.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 8 exercise 12 tree bagging random forest boosting carseats">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 12</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch8/12.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch8/12.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 8 lab trees bagging random forest boosting carseats">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Lab</h3>
+    <span class="sw-lang">Lab</span>
+  </div>
+  <p class="sw-desc">Classification trees, regression trees, bagging, random forests, and boosting.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch8/lab.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch8/lab.R">Source</a>
+  </div>
+</article>
+  </div>
+</section>
+<section class="sw-section" id="chapter-9">
+  <div class="sw-section-head">
+    <h2>Chapter 9 <span class="sw-pill">Support vectors</span></h2>
+    <p>Maximal margin classifiers through kernels. The lab includes the gene-expression example and ROC curves.</p>
+  </div>
+  <div class="sw-grid">
+<article class="sw-card" data-search="chapter 9 exercise 1 svm support vector kernel gene expression roc">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 1</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch9/1.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch9/1.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 9 exercise 2 svm support vector kernel gene expression roc">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 2</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch9/2.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch9/2.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 9 exercise 3 svm support vector kernel gene expression roc">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 3</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch9/3.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch9/3.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 9 exercise 4 svm support vector kernel gene expression roc">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 4</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch9/4.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch9/4.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 9 exercise 5 svm support vector kernel gene expression roc">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 5</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch9/5.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch9/5.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 9 exercise 6 svm support vector kernel gene expression roc">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 6</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch9/6.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch9/6.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 9 exercise 7 svm support vector kernel gene expression roc">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 7</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch9/7.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch9/7.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 9 exercise 8 svm support vector kernel gene expression roc">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 8</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch9/8.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch9/8.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 9 lab svm support vector gene expression roc">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Lab</h3>
+    <span class="sw-lang">Lab</span>
+  </div>
+  <p class="sw-desc">Support vector classifier and SVM, ROC curves, multiple classes, and gene expression.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch9/lab.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch9/lab.R">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 9 quiz simulation 9.R logistic regression linear svm gaussian">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Quiz simulation</h3>
+    <span class="sw-lang">R</span>
+  </div>
+  <p class="sw-desc">ch9/9.R draws Gaussian classes and scores logistic regression on a large test set.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch9/9.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch9/9.R">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 9 Lab_chapter9 tune radial kernel roc">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Lab chapter 9 script</h3>
+    <span class="sw-lang">R</span>
+  </div>
+  <p class="sw-desc">A second SVM script: tuning, a separating hyperplane, radial kernels, and the gene-expression ROC.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch9/Lab_chapter9.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch9/Lab_chapter9.R">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 9 R exercise video linear svm logistic regression test error">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise video script</h3>
+    <span class="sw-lang">R</span>
+  </div>
+  <p class="sw-desc">Draws two Gaussian classes, fits a linear SVM and logistic regression on one train split, and counts test mistakes.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch9/R_exercise_video.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch9/R_exercise_video.R">Source</a>
+  </div>
+</article>
+  </div>
+</section>
+<section class="sw-section" id="chapter-10">
+  <div class="sw-section-head">
+    <h2>Chapter 10 <span class="sw-pill">Unsupervised learning</span></h2>
+    <p>PCA and clustering. Exercise 1 is the within-cluster variance identity. The lab ends on the NCI60 sample.</p>
+  </div>
+  <div class="sw-grid">
+<article class="sw-card" data-search="chapter 10 exercise 1 pca clustering kmeans hierarchical nci60 unsupervised equation 10.12 within cluster variance euclidean">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 1</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Proof of equation (10.12): within-cluster squared distance equals twice the within-cluster sum of squares.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/1.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch10/1.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 10 exercise 2 pca clustering kmeans hierarchical nci60 unsupervised">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 2</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/2.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch10/2.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 10 exercise 3 pca clustering kmeans hierarchical nci60 unsupervised">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 3</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/3.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch10/3.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 10 exercise 4 pca clustering kmeans hierarchical nci60 unsupervised">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 4</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/4.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch10/4.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 10 exercise 5 pca clustering kmeans hierarchical nci60 unsupervised">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 5</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/5.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch10/5.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 10 exercise 6 pca clustering kmeans hierarchical nci60 unsupervised">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 6</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/6.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch10/6.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 10 exercise 7 pca clustering kmeans hierarchical nci60 unsupervised">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 7</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/7.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch10/7.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 10 exercise 8 pca clustering kmeans hierarchical nci60 unsupervised">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 8</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/8.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch10/8.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 10 exercise 9 pca clustering kmeans hierarchical nci60 unsupervised">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 9</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/9.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch10/9.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 10 exercise 10 pca clustering kmeans hierarchical nci60 unsupervised">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 10</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Knitted write-up for this exercise.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/10.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch10/10.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 10 exercise 11 pca clustering kmeans hierarchical nci60 unsupervised Ch10Ex11 linkage complete single average">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Exercise 11</h3>
+    <span class="sw-lang">HTML</span>
+  </div>
+  <p class="sw-desc">Hierarchical clustering on Ch10Ex11.csv with complete, single, and average linkage.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/11.html">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch10/11.Rmd">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="chapter 10 lab pca clustering kmeans hierarchical nci60">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Lab</h3>
+    <span class="sw-lang">Lab</span>
+  </div>
+  <p class="sw-desc">Principal components, k-means, hierarchical clustering, and the NCI60 data.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/lab.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch10/lab.R">Source</a>
+  </div>
+</article>
+  </div>
+</section>
+<section class="sw-section" id="data">
+  <div class="sw-section-head">
+    <h2>Data <span class="sw-pill">Files in the repo</span></h2>
+    <p>Tables the exercises actually open, plus two files stored alongside them.</p>
+  </div>
+  <div class="sw-grid">
+<article class="sw-card" data-search="data auto.csv mpg horsepower">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Auto.csv</h3>
+    <span class="sw-lang">CSV</span>
+  </div>
+  <p class="sw-desc">Comma-separated Auto data. Chapter 2 exercise 9 and the Chapter 3 applied page read it, with ? as missing.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="data/Auto.csv">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/data/Auto.csv">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="data auto.data whitespace">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Auto.data</h3>
+    <span class="sw-lang">Data</span>
+  </div>
+  <p class="sw-desc">Whitespace Auto file kept beside the CSV.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="data/Auto.data">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/data/Auto.data">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="data college.csv elite top10perc">
+  <div class="sw-card-top">
+    <h3 class="sw-name">College.csv</h3>
+    <span class="sw-lang">CSV</span>
+  </div>
+  <p class="sw-desc">College data used by Chapter 2 exercise 8, including the elite flag.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="data/College.csv">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/data/College.csv">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="data carbohydrates.csv">
+  <div class="sw-card-top">
+    <h3 class="sw-name">carbohydrates.csv</h3>
+    <span class="sw-lang">CSV</span>
+  </div>
+  <p class="sw-desc">Stored in data/. No exercise script in the repository reads this file.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="data/carbohydrates.csv">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/data/carbohydrates.csv">Source</a>
+  </div>
+</article>
+<article class="sw-card" data-search="data Ch10Ex11.csv chapter 10 clustering">
+  <div class="sw-card-top">
+    <h3 class="sw-name">Ch10Ex11.csv</h3>
+    <span class="sw-lang">CSV</span>
+  </div>
+  <p class="sw-desc">Gene-style table clustered in Chapter 10, exercise 11.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/Ch10Ex11.csv">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/stat-learning/blob/master/ch10/Ch10Ex11.csv">Source</a>
+  </div>
+</article>
+  </div>
+</section>
+
+<p class="sw-empty" id="sw-empty" hidden>No exercises match that search.</p>
 
 <script>
-exercise_count = [10, 15, 13, 9, 11, 12, 12, 8, 11];
-for (var chapter = 2; chapter <= 10; chapter++) {
-    for (var exercise = 1; exercise <= exercise_count[chapter-2]; exercise++) {
-        link = "ch" + chapter + "/" + exercise + ".html";
-        if (chapter == 2) {
-            if (exercise < 8)
-                link = "https://raw.githubusercontent.com/asadoughi/stat-learning/master/ch2/answers";
-            else
-                link = "https://raw.githubusercontent.com/asadoughi/stat-learning/master/ch2/applied.R";
-        } else if (chapter == 3) {
-            if (exercise < 7)
-                link = "https://raw.githubusercontent.com/asadoughi/stat-learning/master/ch3/answers";
-            else
-                link = "ch3/applied.html";
-        }
-        document.write("<a href='" + link + "'>Chapter " + chapter + " Exercise " + exercise + "</a>");
-        document.write("<br />");
-    }
-    document.write("<br />");
-}
-</script>
+(function () {
+  var input = document.getElementById("sw-q");
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".sw-card"));
+  var sections = Array.prototype.slice.call(document.querySelectorAll(".sw-section"));
+  var empty = document.getElementById("sw-empty");
+  var count = document.getElementById("sw-count");
 
-</body>
-</html>
+  function apply() {
+    var q = input.value.trim().toLowerCase();
+    var shown = 0;
+    cards.forEach(function (card) {
+      var hay = ((card.getAttribute("data-search") || "") + " " + card.textContent).toLowerCase();
+      var ok = !q || hay.indexOf(q) !== -1;
+      card.hidden = !ok;
+      if (ok) shown += 1;
+    });
+    sections.forEach(function (section) {
+      section.hidden = !section.querySelector(".sw-card:not([hidden])");
+    });
+    empty.hidden = shown !== 0;
+    count.textContent = shown + (shown === 1 ? " item" : " items");
+  }
+
+  input.addEventListener("input", apply);
+  apply();
+})();
+</script>
