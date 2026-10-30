@@ -20,20 +20,141 @@ samwiki: true
       <li><strong>Odds, R², and cluster variance</strong> Chapter 4 Exercise 1, Chapter 3 Exercise 7, and Chapter 10 Exercise 1 write those identities out.</li>
       <li><strong>College, Auto, and Boston</strong> Applied R uses <code>College.csv</code>, <code>Auto.csv</code>, and the Boston suburbs, with knitted plots where a chapter was rendered.</li>
       <li><strong>Book labs sit in each chapter</strong> Resampling, ridge and the lasso, splines, trees, SVMs, PCA, and NCI60 clustering are in the <code>lab.R</code> scripts.</li>
-      <li><strong><code>(*)</code> means unsettled</strong> The README uses this mark when the author is not sure about that answer.</li>
+      <li><strong><code>(*)</code> means unsettled</strong> The author flags Chapter 6 Exercise 1(b), Chapter 10 Exercise 6(c), and Chapter 10 Exercise 11(c).</li>
       <li><strong>Links open this repository</strong> Chapter 2 and Chapter 3 use the local files. The upstream collection stays linked beside them.</li>
     </ul>
   </aside>
 </div>
 
+<style>
+body.samwiki #insights .sw-desc {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+}
+</style>
+
+<section class="sw-section" id="insights">
+  <div class="sw-section-head">
+    <h2>From the notes <span class="sw-pill">What they conclude</span></h2>
+    <p>Results written down in the exercise files. Three of them are marked <code>(*)</code>, the README’s sign that the author is not sure.</p>
+  </div>
+  <div class="sw-grid">
+<article class="sw-card" data-search="insight chapter 3 exercise 8 horsepower mpg auto r squared 60.5948 prediction interval nonlinearity">
+  <div class="sw-card-top">
+    <h3 class="sw-name"><a href="ch3/applied.html">Horsepower and mpg</a></h3>
+    <span class="sw-lang">Ch 3 · Ex 8</span>
+  </div>
+  <p class="sw-desc">On <code>Auto.csv</code>, <code>mpg ~ horsepower</code> explains 60.5948% of the variance in mpg (R² about 0.6059). Mean mpg is 23.4459 and the residual standard error is 4.906, about 20.92% of that mean. At 98 horsepower the fit predicts 24.47 mpg: the confidence interval is 23.97 to 24.96, and the prediction interval is 14.81 to 34.12. The residual plots still show nonlinearity.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/applied.html">Open</a>
+  </div>
+</article>
+<article class="sw-card" data-search="insight chapter 2 exercise 10 boston crime tax charles river rooms lstat ptratio 19.05">
+  <div class="sw-card-top">
+    <h3 class="sw-name"><a href="https://raw.githubusercontent.com/sdcastillo/stat-learning/master/ch2/applied.R">Boston’s long crime tail</a></h3>
+    <span class="sw-lang">Ch 2 · Ex 10</span>
+  </div>
+  <p class="sw-desc">Most suburbs have low crime, but 18 have a crime rate above 20 and the tail passes 80. Tax rates split, with a peak at 660–680. Thirty-five suburbs bound the Charles River. The median pupil–teacher ratio is 19.05. Sixty-four suburbs average more than 7 rooms and 13 average more than 8; those 13 have relatively lower crime and lower <code>lstat</code>.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="https://raw.githubusercontent.com/sdcastillo/stat-learning/master/ch2/applied.R">Open</a>
+  </div>
+</article>
+<article class="sw-card" data-search="insight chapter 2 exercise 8 college elite tuition graduation rate top10perc erroneous">
+  <div class="sw-card-top">
+    <h3 class="sw-name"><a href="https://raw.githubusercontent.com/sdcastillo/stat-learning/master/ch2/applied.R">Tuition and a bad graduation rate</a></h3>
+    <span class="sw-lang">Ch 2 · Ex 8</span>
+  </div>
+  <p class="sw-desc">High out-of-state tuition lines up with a high graduation rate. A graduation rate above 100 is called out as an error. A college is coded elite when <code>Top10perc</code> is above 50. Colleges with the most students from the top 10 percent do not necessarily have the highest graduation rate.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="https://raw.githubusercontent.com/sdcastillo/stat-learning/master/ch2/applied.R">Open</a>
+  </div>
+</article>
+<article class="sw-card" data-search="insight chapter 6 exercise 1 best subset training rss test rss unsettled star stepwise path">
+  <div class="sw-card-top">
+    <h3 class="sw-name"><a href="ch6/1.html">Best subset, then a question mark</a></h3>
+    <span class="sw-lang">Ch 6 · Ex 1</span>
+  </div>
+  <p class="sw-desc">Best subset has the smallest training RSS because forward and backward selection depend on which predictors they pick first. Part (b) is marked <code>(*)</code>: best subset looks at more models, and the note says the other methods might still land on a better test model.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch6/1.html">Open</a>
+  </div>
+</article>
+<article class="sw-card" data-search="insight chapter 5 exercise 3 chapter 6 exercise 4 loocv k-fold ridge lambda bias variance irreducible error">
+  <div class="sw-card-top">
+    <h3 class="sw-name"><a href="ch6/4.html">Bias traded for variance</a></h3>
+    <span class="sw-lang">Ch 5–6</span>
+  </div>
+  <p class="sw-desc">Chapter 5, Exercise 3 says leave-one-out cross-validation has higher variance and lower bias than k-fold. Chapter 6, Exercise 4 follows the same tradeoff for the ridge penalty: as λ grows, variance falls until the model predicts a constant, and bias rises. Irreducible error stays constant.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch6/4.html">Open Ch 6</a>
+    <a class="sw-btn sw-btn-source" href="ch5/3.html">Open Ch 5</a>
+  </div>
+</article>
+<article class="sw-card" data-search="insight chapter 10 exercise 6 pca principal component 9.911 11.54 unsettled star simulation">
+  <div class="sw-card-top">
+    <h3 class="sw-name"><a href="ch10/6.html">A group label barely moves PCA</a></h3>
+    <span class="sw-lang">Ch 10 · Ex 6</span>
+  </div>
+  <p class="sw-desc">In the simulation, the first principal component explains 9.911% of the variance. Coding the two groups as 10 versus 0 raises that share to 11.54%, an improvement of 1.629%. The write-up marks the experiment <code>(*)</code> and asks for a better simulation.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/6.html">Open</a>
+  </div>
+</article>
+<article class="sw-card" data-search="insight chapter 10 exercise 11 linkage clustering genes loadings unsettled star complete single average">
+  <div class="sw-card-top">
+    <h3 class="sw-name"><a href="ch10/11.html">Linkage disagrees on the genes</a></h3>
+    <span class="sw-lang">Ch 10 · Ex 11</span>
+  </div>
+  <p class="sw-desc">On <code>Ch10Ex11.csv</code>, complete, single, and average linkage do not agree: the note reads two or three groups, depending on the method. Ranking genes by the sum of their PCA loadings is also marked <code>(*)</code>. The author is not sure that sum is the right way to aggregate the loading vector.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch10/11.html">Open</a>
+  </div>
+</article>
+  </div>
+</section>
+
+<section class="sw-section" id="labs-2026">
+  <div class="sw-section-head">
+    <h2>Labs, 2026 <span class="sw-pill">Same ideas, current R</span></h2>
+    <p>The chapter <code>lab.R</code> files are the book transcriptions. They call <code>fix()</code> and <code>attach()</code>, and they expect the <code>ISLR</code> package. The 2026 script is the modeling code from the Predictive Analytics R Study Manual, pointed at <code>data/Auto.csv</code> and <code>data/College.csv</code>. It refits on its own split, so the intervals it prints will not match the knitted full-sample Auto page. The comparison that matters is inside the script: model versus the training mean, on the same holdout.</p>
+  </div>
+  <div class="sw-grid">
+<article class="sw-card" data-search="labs 2026 rscript glm rpart glmnet prcomp kmeans hclust auto college baseline">
+  <div class="sw-card-top">
+    <h3 class="sw-name"><a href="labs-2026/stat-learning-2026.R">2026 lab script</a></h3>
+    <span class="sw-lang">R</span>
+  </div>
+  <p class="sw-desc">One holdout, built first. A mean baseline and a majority-class baseline. Then <code>lm</code>, a binomial <code>glm</code>, ridge and lasso through <code>cv.glmnet</code>, an <code>rpart</code> tree pruned on <code>xerror</code>, PCA with <code>scale. = TRUE</code>, and k-means plus three linkages. Seed is 2026. Run it from the repository root with <code>Rscript labs-2026/stat-learning-2026.R</code>.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="labs-2026/stat-learning-2026.R">Open</a>
+    <a class="sw-btn sw-btn-source" href="https://github.com/sdcastillo/PA-R-Study-Manual">PA manual</a>
+  </div>
+</article>
+<article class="sw-card" data-search="labs 2026 confidence interval prediction interval horsepower 98 mpg attach fix">
+  <div class="sw-card-top">
+    <h3 class="sw-name"><a href="ch3/lab.R">What the old labs still are</a></h3>
+    <span class="sw-lang">Book labs</span>
+  </div>
+  <p class="sw-desc">Chapter 3’s lab still fits Boston with <code>attach()</code> and prints both a confidence interval and a prediction interval. Keep that file if you are following the book line by line. Use the 2026 script when you want the same check on Auto: at 98 horsepower the mean interval and the one-car interval are not interchangeable, and a model that loses to the training mean on the holdout has not earned a paragraph.</p>
+  <div class="sw-actions">
+    <a class="sw-btn sw-btn-live" href="ch3/lab.R">Open Ch 3 lab</a>
+    <a class="sw-btn sw-btn-source" href="ch6/lab.R">Open Ch 6 lab</a>
+  </div>
+</article>
+  </div>
+</section>
+
 <div class="sw-catalog-bar">
   <div class="sw-toolbar">
     <label class="sw-search">Find an exercise
-      <input id="sw-q" type="search" placeholder="Try logistic, Boston, spline, chapter 10" autocomplete="off">
+      <input id="sw-q" type="search" placeholder="Try horsepower, Boston, unsettled, chapter 10" autocomplete="off">
     </label>
     <p class="sw-result" id="sw-count" aria-live="polite"></p>
   </div>
   <nav class="sw-jumps" aria-label="Chapters">
+    <a href="#insights">Insights</a>
+    <a href="#labs-2026">Labs 2026</a>
     <a href="#chapter-2">Ch 2</a>
     <a href="#chapter-3">Ch 3</a>
     <a href="#chapter-4">Ch 4</a>
