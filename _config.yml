@@ -1,0 +1,34 @@
+# SamWiki theme contract
+# Theme setup follows GitHub's Jekyll theme guide:
+# https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/adding-a-theme-to-your-github-pages-site-using-jekyll
+#
+# Strategy: one supported theme, jekyll-theme-cayman, skinned in assets/css/style.scss.
+# Copied from sdcastillo/sdcastillo.github.io:
+#   assets/css/style.scss
+#   _layouts/default.html
+#   _includes/head-custom.html
+#   _includes/samwiki-nav.html
+# The home page sets `samwiki: true` in its front matter.
+#
+# Pages for this repository publish from the default branch `master`
+# at the repository root.
+# https://sdcastillo.github.io/stat-learning/
+# baseurl stays unset so GitHub Pages can set the project-site prefix.
+
+title: An Introduction to Statistical Learning
+description: Unofficial exercise notes and R labs, from bias–variance through clustering.
+theme: jekyll-theme-cayman
+show_downloads: false
+markdown: kramdown
+
+# Chapter 10 R Markdown sources open with YAML front matter.
+# Leave them out of the Pages build so Jekyll does not emit a second page
+# beside each knitted HTML solution. The files stay in the Git repository.
+exclude:
+  - "ch10/*.Rmd"
+
+# GitHub Pages enables optional front matter by default. Turn it off so the
+# knitted HTML solutions and the markdown sources stay as they are, and only
+# index.html is wrapped in the SamWiki layout.
+optional_front_matter:
+  enabled: false
